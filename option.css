@@ -1,0 +1,64 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+  tr:nth-child(even) td:first-child{
+    border-right:1px solid white;
+  }
+  .down {
+    color: #CC0000 !important;
+  }
+  .up {
+    color: #00A500 !important;
+  }
+  .eq {
+    color: #FF9900 !important;
+  }
+  h3{
+      width: 100%;
+      text-align: center;
+  }
+  .row{
+    width: 100vw;
+  }
+  .h1{
+    margin: 2rem;
+  }
+  .col-md-6{
+    width: 50vw;
+    float: left;
+    padding:2rem;
+  }
+  /* .col-md-4{
+    width: 25vw;
+    float: left;
+  } */
+  .col-md-3{
+    width: 25vw;
+    float: left;
+  }
+  /* .col-md-2{
+    width: 20vw;
+    float: left;
+  }
+  .col-md-1{
+    width: 10vw;
+    float: left;
+  } */
+  input{
+      border: 1px solid #dddddd;
+  }
+  #stocks input[name*=name]{
+    width: 96%;
+  }

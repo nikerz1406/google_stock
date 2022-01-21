@@ -6,7 +6,7 @@ class Stocks{
 }
 Stocks.prototype.getPrice = function(stock){
     var _this = this;
-    fetch('https://api.khochangchang.com/api/stocks')
+    fetch('https://api.khochangchang.com/api/stocks/acb')
     .then(response => response.json())
     .then(data => {
         console.log(data)

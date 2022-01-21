@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="button.css">
+    <link rel="stylesheet" href="option.css">
   </head>
   <body>
-    <div id="buttonDiv"></div>
-    <div>
-      <p class="option-title">Features Not Yet Available</p>
+    <h1>Table </h1>
+    <div class="row">
+      <button id="add" title="add row">+</button>
+      <div class="col-md-6">
+        <table id="stocks">
+          <thead>
+            <tr>
+              <th rowspan="2">No</th>
+              <th rowspan="2"> Name </th>
+              <td colspan="3"> Server</td>
+              <th rowspan="2">Del</th>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+            </tr>
+          </thead>
+          <tbody>
+              <tr data-index=1 ><td>1</td>
+                <td><input type="text" name="stock[1][name]"></td>
+                <td><input type="radio" name="stock[1][server]" checked="" value="1"></td>
+                <td><input type="radio" name="stock[1][server]" value="2"></td>
+                <td><input type="radio" name="stock[1][server]" value="3"></td>
+                <td><button data-btn="remove1" disabled title="remove row">x</button></td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <table id="stocks-realtime">
+          <thead>
+            <tr>
+              <th rowspan="2"> No </th>
+              <th rowspan="2"> Name </th>
+              <th rowspan="2"> Price </th>
+              <th colspan="3"> Server </th>
+            </tr>
+            <tr>
+              <th> 1 </th>
+              <th> 2 </th>
+              <th> 3 </th>
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+      </div>
+      
     </div>
   </body>
   <script src="options.js"></script>

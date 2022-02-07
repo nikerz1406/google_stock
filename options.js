@@ -1,26 +1,79 @@
+
+chrome.storage.sync.get("stocks", ({ stocks }) => {
+    Options.renderStocks(stocks);
+  });
+
 class Options{
     constructor(){
         this.addEventListener()
     }
+    static renderStocks = function(stocks){
+        var tbody = document.getElementById("stocks").getElementsByTagName("tbody")[0];
+        var html = '';
+        if(stocks){
+            var key = 1;
+            stocks.forEach(function(s){
+                
+                html = Options.row({key,name : s});
+                key++;
+                tbody.appendChild(html);
+            })
+        }else{
+            html = Options.row({key:1});
+            tbody.appendChild(html);
+        }
+        
+    }
+    static row = function(data){
+        var key = data.key ? data.key : 1;
+        var name = data.name ? data.name : '';
+        var tr = document.createElement("tr");
+        tr.dataset.index = key;
+        tr.innerHTML = `<td>${ key }</td>
+        <td><input type="text" name="stock[${key}][name]" value="${name}"></td>
+        <td><input type="radio" name="stock[${key}][server]" checked value=1 ></td>
+        <td><input type="radio" name="stock[${key}][server]" value=2 ></td>
+        <td><input type="radio" name="stock[${key}][server]" value=3 ></td>
+        <td><button data-btn="remove${key}" title="remove row">x</button></td>`;
+        return tr;
+    
+    }
 }
+
 Options.prototype.addEventListener = function(){
     var _this = this;
     document.getElementById("add").addEventListener("click",function(){
         _this.add();
+        _this.save();
     })
     
     document.getElementById("stocks").getElementsByTagName("tbody")[0].addEventListener('click',function(e){
         if(e.target.tagName == 'BUTTON'){
             //do something
             _this.remove(e.target);
+            _this.save();
         }
     })
 }
+Options.prototype.save = function(){
+    var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
+    var nodes = body.querySelectorAll("tr");
+    var stocks = [];
+    nodes.forEach(function(e){
+        var txt = e.querySelectorAll("td")[1].getElementsByTagName("input")[0].value;
+        if(txt!='') stocks.push(txt);
+    })
+    chrome.storage.sync.set({ stocks });
+    console.log(stocks);
+}
 Options.prototype.add = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
-    var key = body.querySelectorAll("tr").slice(-1).dataset.index;
-    key = key ? key+1 : 1;
-    var html = this.row({key});
+    console.log(body.querySelectorAll("tr"));
+    var nodes = body.querySelectorAll("tr");
+    var last_node = nodes[nodes.length -1];
+    var key = last_node.dataset.index;
+    key = key ? parseInt(key)+1 : 1;
+    var html = Options.row({key});
     body.appendChild(html);
     this.refreshNo();
 }
@@ -35,17 +88,5 @@ Options.prototype.remove = function(el){
     el.closest("tr").remove();
     this.refreshNo();
 }
-Options.prototype.row = function(data){
-    var key = data.key ? data.key : 1;
-    var tr = document.createElement("tr");
-    tr.dataset.index = key;
-    tr.innerHTML = `<td>${ key }</td>
-    <td><input type="text" name="stock[${key}][name]"></td>
-    <td><input type="radio" name="stock[${key}][server]" checked value=1 ></td>
-    <td><input type="radio" name="stock[${key}][server]" value=2 ></td>
-    <td><input type="radio" name="stock[${key}][server]" value=3 ></td>
-    <td><button data-btn="remove${key}" title="remove row">x</button></td>`;
-    return tr;
 
-}
 new Options(document);

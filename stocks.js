@@ -1,18 +1,29 @@
+chrome.storage.sync.get("stocks", ({ stocks }) => {
+    Stocks.renderStocks(stocks);
+  });
 class Stocks{
     constructor(el){
-        this.doc = el;
-        this.getPrice("VCB");
+ 
+    }
+    static row = function(data){
+        var name = data.name ? data.name.toUpperCase() : '';
+        var vector = data.vector ? data.vector : 'eq';
+        var price = data.price ? data.price : 0;
+        return `<td>${ name }</td><td><div class="${ vector }">${ price }</div></td>`;
+    }
+    static renderStocks = function(stocks){
+        stocks.forEach(stock => {
+            Stocks.getPrice(stock)    
+        });
+    }
+    static getPrice = function(stock){
+        
+        fetch('https://api.khochangchang.com/api/stocks/'+stock)
+        .then(response => response.json())
+        .then(data => {
+            var td = document.createElement("tr");
+            td.innerHTML = Stocks.row(data);
+            document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
+        });
     }
 }
-Stocks.prototype.getPrice = function(stock){
-    var _this = this;
-    fetch('https://api.khochangchang.com/api/stocks/acb')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data)
-        var td = _this.doc.createElement("tr");
-        td.innerHTML = `<td>${ data.name }</td><td><div class="${ data.vector }">${ data.price }</div></td>`
-        _this.doc.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
-    });
-}
-new Stocks(document);

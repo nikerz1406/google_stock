@@ -1,5 +1,6 @@
 chrome.storage.sync.get("stocks", ({ stocks }) => {
     Stocks.renderStocks(stocks);
+    // Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
   });
 class Stocks{
     constructor(el){
@@ -25,5 +26,30 @@ class Stocks{
             td.innerHTML = Stocks.row(data);
             document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
         });
+    }
+    static renderArrayStocks = function(stocks){
+        var data = [];
+        stocks.forEach(stock => {
+            var item = { name : stock , server : 1 }
+            data.push(item);
+        });
+        console.log({data});
+        fetch('http://localhost/api/api/stocks',{
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              method: "POST",
+              body: JSON.stringify({data})
+        })
+        .then(response => response.json())
+        .then(data =>{
+
+            data.forEach(function(i){
+                var td = document.createElement("tr");
+                td.innerHTML = Stocks.row(i);
+                document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
+            })
+        })
     }
 }

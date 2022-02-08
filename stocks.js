@@ -1,6 +1,6 @@
 chrome.storage.sync.get("stocks", ({ stocks }) => {
-    Stocks.renderStocks(stocks);
-    // Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
+    // Stocks.renderStocks(stocks);
+    Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
   });
 class Stocks{
     constructor(el){
@@ -33,14 +33,16 @@ class Stocks{
             var item = { name : stock , server : 1 }
             data.push(item);
         });
-        console.log({data});
-        fetch('http://localhost/api/api/stocks',{
+        let postData = new FormData();
+        postData.append('testdata', 123);
+
+        fetch('https://api.khochangchang.com/api/stocks/',{
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              method: "POST",
-              body: JSON.stringify({data})
+                // 'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            method: "POST",
+            body: JSON.stringify({data})
         })
         .then(response => response.json())
         .then(data =>{

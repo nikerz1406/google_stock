@@ -1,6 +1,10 @@
 chrome.storage.sync.get("stocks", ({ stocks }) => {
-    // Stocks.renderStocks(stocks);
-    Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
+    if(!stocks) return;
+    // var data = Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
+    // if(!data){
+    //     Stocks.renderStocks(stocks);
+    // }
+    Stocks.renderStocks(stocks);
   });
 class Stocks{
     constructor(el){
@@ -12,14 +16,14 @@ class Stocks{
         var price = data.price ? data.price : 0;
         return `<td>${ name }</td><td><div class="${ vector }">${ price }</div></td>`;
     }
-    static renderStocks = function(stocks){
-        stocks.forEach(stock => {
-            Stocks.getPrice(stock)    
+    static renderStocks =  function(stocks){
+        stocks.forEach(async stock => {
+            await Stocks.getPrice(stock)    
         });
     }
-    static getPrice = function(stock){
+    static getPrice = async function(stock){
         
-        fetch('https://api.khochangchang.com/api/stocks/'+stock)
+        return await fetch('https://api.khochangchang.com/api/stocks/'+stock)
         .then(response => response.json())
         .then(data => {
             var td = document.createElement("tr");
@@ -53,5 +57,6 @@ class Stocks{
                 document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
             })
         })
+        return data;
     }
 }

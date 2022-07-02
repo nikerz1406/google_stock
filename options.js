@@ -70,9 +70,13 @@ Options.prototype.add = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
     console.log(body.querySelectorAll("tr"));
     var nodes = body.querySelectorAll("tr");
-    var last_node = nodes[nodes.length -1];
-    var key = last_node.dataset.index;
-    key = key ? parseInt(key)+1 : 1;
+    var key = 1;
+    if(nodes.length != 0){
+        var last_node = nodes[nodes.length -1];
+        key = last_node.dataset.index;
+        key = key ? parseInt(key)+1 : 1;
+    }
+    
     var html = Options.row({key});
     body.appendChild(html);
     this.refreshNo();

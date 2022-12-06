@@ -30,13 +30,19 @@ class Options{
         var tr = document.createElement("tr");
         tr.dataset.index = key;
         tr.innerHTML = `<td class="align-middle ps-3">${ key }</td>
-        <td class="align-middle"><input type="text" class="text-uppercase" name="stock[${key}][name]" value="${name}"></td>
-        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" checked value=1 ></td>
-        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" value=2 ></td>
-        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" value=3 ></td>
+        <td class="align-middle"><input type="text" class="text-uppercase stock-name" name="stock[${key}][name]" value="${name}"></td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio(key,1)+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio(key,2)+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio(key,3)+`</td>
         <td><button class="float-end btn btn-sm btn-outline-danger px-3" data-btn="remove${key}" title="remove row"><i class="fa fa-trash me-1" aria-hidden="true"></i> Remove</button></td>`;
         return tr;
     
+    }
+    static bootstrapRadio = function(key,value = 1){
+        var isCheck = value == 1 ? 'checked' : '';
+        return `<div class="justify-content-center align-items-center">
+            <input class="form-check-input" type="radio" name="stock[${key}][server] value="${value}" ${isCheck}>
+        </div>`
     }
 }
 
@@ -46,6 +52,8 @@ Options.prototype.addEventListener = function(){
         _this.add();
         _this.save();
     })
+
+
     
     document.getElementById("stocks").getElementsByTagName("tbody")[0].addEventListener('click',function(e){
         if(e.target.tagName == 'BUTTON'){
@@ -54,6 +62,7 @@ Options.prototype.addEventListener = function(){
             _this.save();
         }
     })
+
 }
 Options.prototype.save = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
@@ -79,7 +88,14 @@ Options.prototype.add = function(){
     
     var html = Options.row({key});
     body.appendChild(html);
+    this.addTriggerFocusSave(html);
     this.refreshNo();
+}
+Options.prototype.addTriggerFocusSave = function(element){
+    var _this = this;
+    element.addEventListener('focusout',function(){
+        _this.save();
+    })
 }
 Options.prototype.refreshNo = function(){
     let = no = 1;

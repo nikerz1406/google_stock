@@ -1,13 +1,13 @@
 {
   "name": "Quickly query price stocks",
-  "description": "Build an Extension!",
+  "description": "Tool help to quickly query price vn stocks",
   "version": "1.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
   },
   "permissions": ["storage", "activeTab","tabs", "scripting"],
-  "host_permissions": ["https://api.khochangchang.com"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

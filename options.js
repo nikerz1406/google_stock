@@ -1,3 +1,4 @@
+import Stocks from './stocks.js';
 
 chrome.storage.sync.get("stocks", ({ stocks }) => {
     Options.renderStocks(stocks);
@@ -18,10 +19,12 @@ class Options{
                 key++;
                 tbody.appendChild(html);
             })
-        }else{
-            html = Options.row({key:1});
-            tbody.appendChild(html);
+            return;
         }
+        
+        // default empty row
+        html = Options.row({key:1});    
+        tbody.appendChild(html);
         
     }
     static row = function(data){
@@ -31,18 +34,38 @@ class Options{
         tr.dataset.index = key;
         tr.innerHTML = `<td class="align-middle ps-3">${ key }</td>
         <td class="align-middle"><input type="text" class="text-uppercase stock-name" name="stock[${key}][name]" value="${name}"></td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio(key,1)+`</td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio(key,2)+`</td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio(key,3)+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:1})+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:2})+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:3})+`</td>
         <td><button class="float-end btn btn-sm btn-outline-danger px-3" data-btn="remove${key}" title="remove row"><i class="fa fa-trash me-1" aria-hidden="true"></i> Remove</button></td>`;
         return tr;
     
     }
-    static bootstrapRadio = function(key,value = 1){
+    static bootstrapRadio = function(data){
+        var key = data.key ? data.key : 1;
+        var value = data.value ? data.value : 1;
         var isCheck = value == 1 ? 'checked' : '';
         return `<div class="justify-content-center align-items-center">
             <input class="form-check-input" type="radio" name="stock[${key}][server] value="${value}" ${isCheck}>
         </div>`
+    }
+    static bootstrapPrice = function(data){
+        var price = data.price ? data.price : '-';
+        var color = data.vector ? ( data.vector == 'up' ? 'success' : (data.vector == 'down' ? 'danger' : 'warning')) : 'danger';
+        var icon = data.vector ? ( data.vector == 'up' ? 'fa fa-sort-asc' : (data.vector == 'down' ? 'fa fa-caret-down' : 'fa fa-minus')) : 'fa fa-caret-down';
+        return `<span class="text-${color}">${price}  <i class="ms-1 align-middle ${icon} text-${color}" aria-hidden="true"></i></span>`;
+    }
+    static rowServerAlive = function(data){
+        var key = data.key ? data.key : 1;
+        var name = data.name ? data.name : '';
+        var tr = document.createElement("tr");
+        tr.dataset.index = key;
+        tr.innerHTML = `<td class="align-middle ps-3 ">${ key }</td>
+        <td class="align-middle text-uppercase">${name}</td>
+        <td class="align-middle text-center">`+Options.bootstrapPrice(data)+`</td>
+        <td class="align-middle text-center">-</td>
+        <td class="align-middle text-center">-</td>`;
+        return tr;
     }
 }
 
@@ -53,8 +76,6 @@ Options.prototype.addEventListener = function(){
         _this.save();
     })
 
-
-    
     document.getElementById("stocks").getElementsByTagName("tbody")[0].addEventListener('click',function(e){
         if(e.target.tagName == 'BUTTON'){
             //do something
@@ -63,8 +84,12 @@ Options.prototype.addEventListener = function(){
         }
     })
 
+
+    document.getElementById("refresh-query").addEventListener('click',function(){
+        _this.refresh();
+    })
 }
-Options.prototype.save = function(){
+Options.prototype.getCurrentStocks = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
     var nodes = body.querySelectorAll("tr");
     var stocks = [];
@@ -72,12 +97,16 @@ Options.prototype.save = function(){
         var txt = e.querySelectorAll("td")[1].getElementsByTagName("input")[0].value;
         if(txt!='') stocks.push(txt);
     })
+    return stocks;
+}
+Options.prototype.save = function(){
+    var stocks = this.getCurrentStocks();
     chrome.storage.sync.set({ stocks });
-    console.log(stocks);
+    // console.log(stocks);
 }
 Options.prototype.add = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
-    console.log(body.querySelectorAll("tr"));
+    // console.log(body.querySelectorAll("tr"));
     var nodes = body.querySelectorAll("tr");
     var key = 1;
     if(nodes.length != 0){
@@ -89,7 +118,7 @@ Options.prototype.add = function(){
     var html = Options.row({key});
     body.appendChild(html);
     this.addTriggerFocusSave(html);
-    this.refreshNo();
+    this.refresh();
 }
 Options.prototype.addTriggerFocusSave = function(element){
     var _this = this;
@@ -97,8 +126,29 @@ Options.prototype.addTriggerFocusSave = function(element){
         _this.save();
     })
 }
+Options.prototype.refresh = function (){
+    // reset number table
+    this.refreshNo();
+    // reset price server alive
+    this.refreshPrice();
+}
+Options.prototype.refreshPrice = function(){
+    var stocks = this.getCurrentStocks();
+    var key = 1;
+    var tbody = document.getElementById("stocks-realtime").getElementsByTagName("tbody")[0];
+    tbody.innerHTML = '';
+    stocks.forEach(async stock => {
+        var data = await Stocks.getPrice(stock);
+        data.key = key;
+        console.log({data})
+        var html = Options.rowServerAlive(data);
+        tbody.append(html);
+        key++;
+    });
+    console.log("done")
+}
 Options.prototype.refreshNo = function(){
-    let = no = 1;
+    let no = 1;
     document.getElementById("stocks").getElementsByTagName("tbody")[0].querySelectorAll("tr").forEach(e=>{
         e.getElementsByTagName("td")[0].innerHTML = no;
         no++;
@@ -106,7 +156,7 @@ Options.prototype.refreshNo = function(){
 }
 Options.prototype.remove = function(el){
     el.closest("tr").remove();
-    this.refreshNo();
+    this.refresh();
 }
 
 new Options(document);

@@ -1,12 +1,5 @@
-chrome.storage.sync.get("stocks", ({ stocks }) => {
-    if(!stocks) return;
-    // var data = Stocks.renderArrayStocks(stocks); // post method to send array stocks and get result array
-    // if(!data){
-    //     Stocks.renderStocks(stocks);
-    // }
-    Stocks.renderStocks(stocks);
-  });
-class Stocks{
+
+export default class Stocks{
     constructor(el){
  
     }
@@ -18,17 +11,17 @@ class Stocks{
     }
     static renderStocks =  function(stocks){
         stocks.forEach(async stock => {
-            await Stocks.getPrice(stock)    
-        });
-    }
-    static getPrice = async function(stock){
-        
-        return await fetch('https://api.khochangchang.com/api/stocks/'+stock)
-        .then(response => response.json())
-        .then(data => {
+            var data = await Stocks.getPrice(stock);
             var td = document.createElement("tr");
             td.innerHTML = Stocks.row(data);
             document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
+        });
+    }
+    static getPrice = async function(stock){
+        return await fetch('https://api.khochangchang.com/api/stocks/'+stock)
+        .then(response => response.json())
+        .then(data => {
+            return data;
         });
     }
     static renderArrayStocks = function(stocks){

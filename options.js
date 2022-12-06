@@ -29,12 +29,12 @@ class Options{
         var name = data.name ? data.name : '';
         var tr = document.createElement("tr");
         tr.dataset.index = key;
-        tr.innerHTML = `<td>${ key }</td>
-        <td><input type="text" name="stock[${key}][name]" value="${name}"></td>
-        <td><input type="radio" name="stock[${key}][server]" checked value=1 ></td>
-        <td><input type="radio" name="stock[${key}][server]" value=2 ></td>
-        <td><input type="radio" name="stock[${key}][server]" value=3 ></td>
-        <td><button data-btn="remove${key}" title="remove row">x</button></td>`;
+        tr.innerHTML = `<td class="align-middle ps-3">${ key }</td>
+        <td class="align-middle"><input type="text" class="text-uppercase" name="stock[${key}][name]" value="${name}"></td>
+        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" checked value=1 ></td>
+        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" value=2 ></td>
+        <td class="align-middle text-center"><input type="radio" name="stock[${key}][server]" value=3 ></td>
+        <td><button class="float-end btn btn-sm btn-outline-danger px-3" data-btn="remove${key}" title="remove row"><i class="fa fa-trash me-1" aria-hidden="true"></i> Remove</button></td>`;
         return tr;
     
     }

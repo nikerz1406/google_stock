@@ -145,7 +145,7 @@ Options.prototype.refreshPrice = function(){
         tbody.append(html);
         key++;
     });
-    console.log("done")
+    // console.log("done")
 }
 Options.prototype.refreshNo = function(){
     let no = 1;
@@ -158,5 +158,6 @@ Options.prototype.remove = function(el){
     el.closest("tr").remove();
     this.refresh();
 }
-
-new Options(document);
+document.addEventListener("DOMContentLoaded", () => {
+    new Options(document);
+});

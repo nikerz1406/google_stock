@@ -43,7 +43,7 @@ body {
   
   .sidebar .nav-link {
     font-weight: 500;
-    color: #333;
+    color: #c6c6c6;
   }
   
   .sidebar .nav-link .feather {
@@ -101,4 +101,55 @@ body {
   input[name*=stock]{
     text-indent: 0.3rem;
   }
-  
+  .bg-black2{
+    background:#222831;
+  }
+  .bg-ligh-black{
+    background:#393E46;
+  }
+  .bg-orange{
+    background:#D65A31;
+  }
+  .bg-grey{
+    background:#EEEEEE;
+  }
+  .color-grey{
+    color:#c6c6c6;
+  }
+  .text-orange{
+    color:#D65A31;
+  }
+
+  body{
+    height: 100%;
+    overflow: hidden;
+  }
+  .row.body{
+    height:94.9vh;
+    overflow: auto;
+  }
+  hr{
+    width: 97%;
+    border-top: #c6c6c6 1px solid;
+    margin:0.5rem 0.2rem 0;
+  }
+
+.row.body::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #212529;
+}
+
+.row.body::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #212529;
+}
+
+.row.body::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #D65A31;
+}

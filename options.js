@@ -102,11 +102,9 @@ Options.prototype.getCurrentStocks = function(){
 Options.prototype.save = function(){
     var stocks = this.getCurrentStocks();
     chrome.storage.sync.set({ stocks });
-    // console.log(stocks);
 }
 Options.prototype.add = function(){
     var body = document.getElementById("stocks").getElementsByTagName("tbody")[0];
-    // console.log(body.querySelectorAll("tr"));
     var nodes = body.querySelectorAll("tr");
     var key = 1;
     if(nodes.length != 0){
@@ -118,13 +116,19 @@ Options.prototype.add = function(){
     var html = Options.row({key});
     body.appendChild(html);
     this.addTriggerFocusSave(html);
-    this.refresh();
+    // setTimeout(()=>{
+    //     _this.refresh();
+    //     console.log("refresh run")
+    // },100)
+    
 }
 Options.prototype.addTriggerFocusSave = function(element){
     var _this = this;
     element.addEventListener('focusout',function(){
         _this.save();
+        _this.refresh();
     })
+    
 }
 Options.prototype.refresh = function (){
     // reset number table
@@ -140,12 +144,10 @@ Options.prototype.refreshPrice = function(){
     stocks.forEach(async stock => {
         var data = await Stocks.getPrice(stock);
         data.key = key;
-        console.log({data})
         var html = Options.rowServerAlive(data);
         tbody.append(html);
         key++;
     });
-    // console.log("done")
 }
 Options.prototype.refreshNo = function(){
     let no = 1;

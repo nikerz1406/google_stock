@@ -1,10 +1,10 @@
-
+const API_SERVER = false ? 'http://localhost/api' : 'https://api.khochangchang.com' ;
 export default class Stocks{
     constructor(el){
- 
+        
     }
     static row = function(data){
-        var name = data.name ? data.name.toUpperCase() : '';
+        var name = data.stock ? data.stock.toUpperCase() : '';
         var vector = data.vector ? data.vector : 'eq';
         var price = data.price ? data.price : 0;
         return `<td>${ name }</td><td><div class="${ vector }">${ price }</div></td>`;
@@ -18,38 +18,21 @@ export default class Stocks{
         });
     }
     static getPrice = async function(stock){
-        return await fetch('https://api.khochangchang.com/api/stocks/'+stock)
+        var url = API_SERVER+'/api/stocks/' + stock.name + "/" + stock.server ;
+        return await fetch(url)
         .then(response => response.json())
-        .then(data => {
-            return data;
+        .then(res => {
+            return res.data;
         });
     }
-    static renderArrayStocks = function(stocks){
-        var data = [];
-        stocks.forEach(stock => {
-            var item = { name : stock , server : 1 }
-            data.push(item);
-        });
-        let postData = new FormData();
-        postData.append('testdata', 123);
+    static getPriceWithServer = async function (stock,server = '') {
 
-        fetch('https://api.khochangchang.com/api/stocks/',{
-            headers: {
-                // 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            method: "POST",
-            body: JSON.stringify({data})
-        })
+        // enum server : [1,2,3,all,'']
+        var url = API_SERVER+'/api/stocks/'+stock+'/'+server;
+        return await fetch(url)
         .then(response => response.json())
-        .then(data =>{
-
-            data.forEach(function(i){
-                var td = document.createElement("tr");
-                td.innerHTML = Stocks.row(i);
-                document.getElementById("stocks").getElementsByTagName("tbody")[0].append(td);
-            })
-        })
-        return data;
+        .then(res => {
+            return res.data.stock;
+        });
     }
 }

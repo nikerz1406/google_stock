@@ -11,11 +11,11 @@ class Options{
     static renderStocks = function(stocks){
         var tbody = document.getElementById("stocks").getElementsByTagName("tbody")[0];
         var html = '';
+        
         if(stocks){
             var key = 1;
             stocks.forEach(function(s){
-                
-                html = Options.row({key,name : s});
+                html = Options.row({key,name:s.name,server:s.server});
                 key++;
                 tbody.appendChild(html);
             })
@@ -28,15 +28,17 @@ class Options{
         
     }
     static row = function(data){
+        
         var key = data.key ? data.key : 1;
         var name = data.name ? data.name : '';
+        var server = data.server ? data.server : 1;
         var tr = document.createElement("tr");
         tr.dataset.index = key;
         tr.innerHTML = `<td class="align-middle ps-3">${ key }</td>
         <td class="align-middle"><input type="text" class="text-uppercase stock-name" name="stock[${key}][name]" value="${name}"></td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:1})+`</td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:2})+`</td>
-        <td class="align-middle text-center">`+Options.bootstrapRadio({key,value:3})+`</td>
+        <td class="align-middle text-center">` + Options.bootstrapRadio({key,value:1,server}) + `</td>
+        <td class="align-middle text-center">` + Options.bootstrapRadio({key,value:2,server}) + `</td>
+        <td class="align-middle text-center">` + Options.bootstrapRadio({key,value:3,server}) + `</td>
         <td><button class="float-end btn btn-sm btn-outline-danger px-3" data-btn="remove${key}" title="remove row"><i class="fa fa-trash me-1" aria-hidden="true"></i> Remove</button></td>`;
         return tr;
     
@@ -44,9 +46,10 @@ class Options{
     static bootstrapRadio = function(data){
         var key = data.key ? data.key : 1;
         var value = data.value ? data.value : 1;
-        var isCheck = value == 1 ? 'checked' : '';
+        var isCheck = value == data.server ? 'checked' : '';
+        
         return `<div class="justify-content-center align-items-center">
-            <input class="form-check-input" type="radio" name="stock[${key}][server] value="${value}" ${isCheck}>
+            <input class="form-check-input" type="radio" name="stock[${key}][server]" value="${value}" ${isCheck}>
         </div>`
     }
     static bootstrapPrice = function(data){
@@ -59,12 +62,13 @@ class Options{
         var key = data.key ? data.key : 1;
         var name = data.name ? data.name : '';
         var tr = document.createElement("tr");
+        var server = data.server ? data.server : [];
         tr.dataset.index = key;
         tr.innerHTML = `<td class="align-middle ps-3 ">${ key }</td>
         <td class="align-middle text-uppercase">${name}</td>
-        <td class="align-middle text-center">`+Options.bootstrapPrice(data)+`</td>
-        <td class="align-middle text-center">-</td>
-        <td class="align-middle text-center">-</td>`;
+        <td class="align-middle text-center">`+Options.bootstrapPrice(server[0])+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapPrice(server[1])+`</td>
+        <td class="align-middle text-center">`+Options.bootstrapPrice(server[2])+`</td>`;
         return tr;
     }
 }
@@ -84,7 +88,6 @@ Options.prototype.addEventListener = function(){
         }
     })
 
-
     document.getElementById("refresh-query").addEventListener('click',function(){
         _this.refresh();
     })
@@ -95,12 +98,22 @@ Options.prototype.getCurrentStocks = function(){
     var stocks = [];
     nodes.forEach(function(e){
         var txt = e.querySelectorAll("td")[1].getElementsByTagName("input")[0].value;
-        if(txt!='') stocks.push(txt);
+        // var server = e.querySelector("input[type='radio']:checked").value;
+        var radios = e.getElementsByClassName("form-check-input")
+        var server = 1;
+        Array.from(radios, (element, index) => { 
+            if(element.checked){
+                server = element.value;
+            }
+        })
+
+        if(txt!='') stocks.push({name:txt,server});
     })
     return stocks;
 }
 Options.prototype.save = function(){
     var stocks = this.getCurrentStocks();
+    console.log({stocks})
     chrome.storage.sync.set({ stocks });
 }
 Options.prototype.add = function(){
@@ -116,10 +129,6 @@ Options.prototype.add = function(){
     var html = Options.row({key});
     body.appendChild(html);
     this.addTriggerFocusSave(html);
-    // setTimeout(()=>{
-    //     _this.refresh();
-    //     console.log("refresh run")
-    // },100)
     
 }
 Options.prototype.addTriggerFocusSave = function(element){
@@ -142,7 +151,7 @@ Options.prototype.refreshPrice = function(){
     var tbody = document.getElementById("stocks-realtime").getElementsByTagName("tbody")[0];
     tbody.innerHTML = '';
     stocks.forEach(async stock => {
-        var data = await Stocks.getPrice(stock);
+        var data = await Stocks.getPriceWithServer(stock.name,"all");
         data.key = key;
         var html = Options.rowServerAlive(data);
         tbody.append(html);

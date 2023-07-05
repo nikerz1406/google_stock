@@ -1,4 +1,4 @@
-const API_SERVER = false ? 'http://localhost/api' : 'https://api.khochangchang.com' ;
+const API_SERVER = false ? 'http://localhost/api' : 'https://api.mrlehue.com' ;
 export default class Stocks{
     constructor(el){
         

@@ -1,4 +1,4 @@
-const API_SERVER = false ? 'http://localhost/api' : 'https://api.mrlehue.com' ;
+import endpoints from '../config/api.js'
 export default class Stocks{
     constructor(el){
         
@@ -18,7 +18,7 @@ export default class Stocks{
         });
     }
     static getPrice = async function(stock){
-        var url = API_SERVER+'/api/stocks/' + stock.name + "/" + stock.server ;
+        var url = endpoints + stock.name + "/" + stock.server ;
         return await fetch(url)
         .then(response => response.json())
         .then(res => {
@@ -28,7 +28,7 @@ export default class Stocks{
     static getPriceWithServer = async function (stock,server = '') {
 
         // enum server : [1,2,3,all,'']
-        var url = API_SERVER+'/api/stocks/'+stock+'/'+server;
+        var url = endpoints + stock +'/'+server;
         return await fetch(url)
         .then(response => response.json())
         .then(res => {

@@ -46,7 +46,7 @@ export default class Stocks {
         const url = endpoints + stock.name + '/' + stock.server;
         const response = await fetch(url);
         const res = await response.json();
-        return res.data;
+        return res;
     }
 
     /**
@@ -59,6 +59,6 @@ export default class Stocks {
         const url = endpoints + stock + '/' + server;
         const response = await fetch(url);
         const res = await response.json();
-        return res.data.stock;
+        return res.stock;
     }
 }
